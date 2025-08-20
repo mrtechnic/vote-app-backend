@@ -1,10 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "app.ts",
+  "main": "dist/app.js",
   "scripts": {
-    "start": "ts-node src/app.ts",
-    "dev": "nodemon src/app.ts"
+    "start": "node .",
+    "dev": "nodemon src/app.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -34,11 +35,11 @@
     "@types/helmet": "^0.0.48",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^24.0.3",
+    "@types/node": "^24.3.0",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   },
   "description": ""
 }
