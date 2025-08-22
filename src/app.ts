@@ -17,6 +17,7 @@ const app = express();
 const allowedOrigins: string[] = [
   "http://localhost:5173",
   "https://vote-app-frontend-9wt9h7vzz-mrtechnics-projects.vercel.app",
+  "https://vote-app-frontend-q022on6ki-mrtechnics-projects.vercel.app",
   "https://vote-app-frontend.vercel.app",
 ];
 
