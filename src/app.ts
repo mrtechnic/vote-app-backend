@@ -33,8 +33,22 @@ mongoose.connect(mongoUri)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB error:", err));
 
+  const allowedOrigins = [
+  "http://localhost:5173", 
+  "https://vote-app-frontend-9wt9h7vzz-mrtechnics-projects.vercel.app"
+];
+
 app.use(cookieParser())
-app.use(cors({origin: frontendUrl, credentials: true}));
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
 app.use(morgan('common'));
 app.use(express.json());
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
