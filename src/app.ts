@@ -13,13 +13,28 @@ import cookieParser from "cookie-parser";
 import { frontendUrl } from "./utils/constants";
 
 const app = express();
+
+const allowedOrigins: string[] = [
+  "http://localhost:5173",
+  "https://vote-app-frontend-9wt9h7vzz-mrtechnics-projects.vercel.app",
+  "https://vote-app-frontend.vercel.app",
+];
+
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: ["GET", "POST"],
+    credentials: true,
   }
 });
+
 
 const PORT = process.env.PORT || 3000;
 
@@ -32,11 +47,6 @@ if (!mongoUri) {
 mongoose.connect(mongoUri)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB error:", err));
-
-  const allowedOrigins = [
-  "http://localhost:5173", 
-  "https://vote-app-frontend-9wt9h7vzz-mrtechnics-projects.vercel.app"
-];
 
 app.use(cookieParser())
 app.use(cors({
