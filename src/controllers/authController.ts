@@ -71,7 +71,11 @@ res.cookie(authCookieName, token, {
 });
 
 
-    res.status(200).json({ message: 'Log In successful' });
+    res.status(200).json({ 
+      message: 'Log In successful',
+      user: { id: user._id, name: user.name, email: user.email } 
+
+    });
     return
   } catch (error) {
     console.error('Login error:', error);
