@@ -32,7 +32,21 @@ const user = new User({
 
     await user.save();
 
-    res.status(201).json({ message: 'User registered successfully' });
+    // Automatically log in the user after registration
+    const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1d' });
+
+    res.cookie(authCookieName, token, {
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+      httpOnly: true, // prevents JavaScript access (more secure)
+      secure: process.env.NODE_ENV === "production", // cookie only sent over HTTPS in production
+      sameSite: "none", // prevents CSRF attacks
+      path: "/", // cookie is valid for the whole site
+    });
+
+    res.status(201).json({ 
+      message: 'User registered successfully',
+      user: { id: user._id, name: user.name, email: user.email }
+    });
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Server error' });
@@ -64,9 +78,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 res.cookie(authCookieName, token, {
   maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
-  httpOnly: false, // prevents JavaScript access (more secure)
+  httpOnly: true, // prevents JavaScript access (more secure)
   secure: process.env.NODE_ENV === "production", // cookie only sent over HTTPS in production
-  sameSite: "strict", // prevents CSRF attacks
+  sameSite: "none", // prevents CSRF attacks
   path: "/", // cookie is valid for the whole site
 });
 
@@ -97,11 +111,15 @@ export const fetchLoggedInUser = async (req: Request, res: Response): Promise<vo
 
 export const logOutUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    res.clearCookie(authCookieName);
+    res.clearCookie(authCookieName, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      path: "/",
+    });
     res.status(200).json({ message: 'Logout successful' });
-    return
   } catch (error) {
-    console.error('')
+    console.error('Logout error:', error);
     res.status(500).json({ error: 'Server error' });
   }
-}
+};
