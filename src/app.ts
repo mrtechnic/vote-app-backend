@@ -17,16 +17,10 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: (origin, callback) => {
-      if (!origin || origin === frontendUrl) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: frontendUrl,
     methods: ["GET", "POST"],
     credentials: true,
-  }
+  },
 });
 
 
@@ -44,15 +38,17 @@ mongoose.connect(mongoUri)
 
 app.use(cookieParser())
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || origin === frontendUrl) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true
+  origin: frontendUrl,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
+
+app.options("*", cors({
+  origin: frontendUrl,
+  credentials: true,
+}));
+
 app.use(morgan('common'));
 app.use(express.json());
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
