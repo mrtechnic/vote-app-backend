@@ -14,18 +14,11 @@ import { frontendUrl } from "./utils/constants";
 
 const app = express();
 
-const allowedOrigins: string[] = [
-  "http://localhost:5173",
-  "https://vote-app-frontend-9wt9h7vzz-mrtechnics-projects.vercel.app",
-  "https://vote-app-frontend-q022on6ki-mrtechnics-projects.vercel.app",
-  "https://vote-app-frontend.vercel.app",
-];
-
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || origin === frontendUrl) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
@@ -52,7 +45,7 @@ mongoose.connect(mongoUri)
 app.use(cookieParser())
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || origin === frontendUrl) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
