@@ -68,7 +68,7 @@ res.cookie(authCookieName, token, {
   maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
   httpOnly: false, // prevents JavaScript access (more secure)
   secure: process.env.NODE_ENV === "production", // cookie only sent over HTTPS in production
-  sameSite: "lax", // prevents CSRF attacks
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // prevents CSRF attacks
   path: "/", // cookie is valid for the whole site
 });
 
