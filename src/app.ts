@@ -44,10 +44,7 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
-app.options("*", cors({
-  origin: frontendUrl,
-  credentials: true,
-}));
+
 
 app.use(morgan('common'));
 app.use(express.json());
