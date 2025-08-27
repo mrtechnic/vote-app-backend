@@ -64,7 +64,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1d' });
 
-res.cookie(authCookieName, token, {
+  res.cookie(authCookieName, token, {
   maxAge: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
   httpOnly: false, // prevents JavaScript access (more secure)
   secure: process.env.NODE_ENV === "production", // cookie only sent over HTTPS in production
@@ -75,6 +75,7 @@ res.cookie(authCookieName, token, {
 
     res.status(200).json({ 
       message: 'Log In successful',
+      token,
       user: { id: user._id, name: user.name, email: user.email } 
 
     });

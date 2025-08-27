@@ -15,10 +15,17 @@ export const authenticateToken = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const token = req.cookies[authCookieName]
+  let token = req.cookies[authCookieName]
+
+  if(!token && req.headers.authorization){
+    const parts = req.headers.authorization.split(" ");
+    if (parts[0] === "Bearer" && parts[1]) {
+      token = parts[1];
+    }
+  }
 
   if (!token) {
-    res.status(401).json({ error: 'Token required' });
+    res.status(401).json({ error: "Token required" });
     return;
   }
 
