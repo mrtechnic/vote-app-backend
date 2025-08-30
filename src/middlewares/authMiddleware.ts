@@ -2,11 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import dotenv from 'dotenv';
-import { authCookieName } from '../utils/constants';
 
 dotenv.config();
-
-
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
@@ -15,9 +12,10 @@ export const authenticateToken = async (
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  let token = req.cookies[authCookieName]
+  let token: string | undefined;
 
-  if(!token && req.headers.authorization){
+  // Only check the Authorization header
+  if (req.headers.authorization) {
     const parts = req.headers.authorization.split(" ");
     if (parts[0] === "Bearer" && parts[1]) {
       token = parts[1];
@@ -31,7 +29,10 @@ export const authenticateToken = async (
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as any;
+    console.log("Decoded token:", decoded);
+
     const user = await User.findById(decoded.userId);
+    console.log("Found user:", user);
 
     if (!user) {
       res.status(403).json({ error: 'Invalid token' });
@@ -40,7 +41,7 @@ export const authenticateToken = async (
 
     req.user = user;
     next();
-  } catch {
+  } catch (error) {
     res.status(403).json({ error: 'Invalid token' });
   }
 };
